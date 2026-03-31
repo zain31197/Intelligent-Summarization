@@ -149,20 +149,20 @@ This project was built as a complete, end-to-end demonstration of:
 ## 🛠️ Tech Stack
 
 ```
-┌─────────────────────────────────────────────┐
+┌──────────────────────────────────────────────┐
 │              FRONTEND LAYER                  │
 │          Streamlit  |  Custom CSS            │
-├─────────────────────────────────────────────┤
+├──────────────────────────────────────────────┤
 │              BACKEND LAYER                   │
 │     FastAPI  |  Uvicorn  |  Pydantic         │
-├─────────────────────────────────────────────┤
+├──────────────────────────────────────────────┤
 │               ML LAYER                       │
 │   HuggingFace Transformers  |  PyTorch       │
-│   T5-Small (60M parameters)                 │
-├─────────────────────────────────────────────┤
+│   T5-Small (60M parameters)                  │
+├──────────────────────────────────────────────┤
 │            EVALUATION LAYER                  │
 │          rouge-score  |  datasets            │
-└─────────────────────────────────────────────┘
+└──────────────────────────────────────────────┘
 ```
 
 | Layer         | Technology              | Version    | Purpose               |
@@ -220,8 +220,8 @@ summarize-ai/
 
 ### Step 1 — Clone the Repository
 ```bash
-git clone https://zain31197/summarize-ai.git
-cd summarize-ai
+git clone https://zain31197/Intelligent-Summarization.git
+cd Intelligent-Summarization
 ```
 
 ### Step 2 — Create Virtual Environment
