@@ -1,4 +1,4 @@
-# 🧠 SummarizeAI — NLP Text Summarization App
+# 🧠 SummarizeAI : NLP Text Summarization App
 
 <div align="center">
 
