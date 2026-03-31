@@ -26,50 +26,10 @@
 
 ![Main UI](ui_1.png)
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  ⚙️ Settings          │        📝 SummarizeAI               │
-│  ──────────────────   │  Powered by T5 Encoder-Decoder      │
-│  Max Length: [150]    │  ─────────────────────────────────  │
-│  Min Length: [40 ]    │                                     │
-│  Beam Width: [ 4 ]    │  📄 Input Text                      │
-│  Length Pen: [2.0]    │  ┌─────────────────────────────┐   │
-│                       │  │ Paste your article here...  │   │
-│  📋 Paste Text   ●    │  │                             │   │
-│  📁 Upload File  ○    │  └─────────────────────────────┘   │
-│  🌐 URL (soon)   ○    │  Words: 342 | ~2 min read          │
-│                       │                                     │
-│  ℹ️ About             │     [  🚀 Generate Summary  ]       │
-│  Model: T5-Small      │                                     │
-│  Params: 60M          │                                     │
-└─────────────────────────────────────────────────────────────┘
-```
-
 ### 📊 Results & Analytics Dashboard
 > Rich output with compression metrics, download options, and summary history
 
 ![Results UI](ui_2.png)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   ✨ Generated Summary                       │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ NASA's Perseverance rover found organic molecules on  │  │
-│  │ Mars near the Jezero Crater, reigniting debate about  │  │
-│  │ ancient microbial life. Further analysis is planned.  │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                                                             │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│  │📊 Orig.  │ │📝 Summ.  │ │📉 Compr. │ │⏱️ Time   │      │
-│  │  342     │ │   48     │ │  86%     │ │  3.2s    │      │
-│  │  words   │ │  words   │ │ shorter  │ │          │      │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-│                                                             │
-│  [📋 Copy]  [⬇️ Download .txt]  [🔄 Summarize Again]       │
-│                                                             │
-│  📚 Summary History (last 5)  ▼                            │
-└─────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -108,57 +68,57 @@ This project was built as a complete, end-to-end demonstration of:
 ## 🏗️ Architecture
 
 ```
-                    ┌─────────────────────────────────────┐
-                    │         T5 ARCHITECTURE              │
-                    └─────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│             T5 ARCHITECTURE              │
+└──────────────────────────────────────────┘
 
-INPUT TEXT                                         OUTPUT SUMMARY
-"summarize: [article]"                             "Short summary..."
+ INPUT TEXT                                      OUTPUT SUMMARY
+ "summarize: [article]"                          "Short summary..."
 
-        │                                                 ▲
-        ▼                                                 │
-┌───────────────┐     Hidden State      ┌───────────────────────┐
-│   TOKENIZER   │ ──── token IDs ────▶  │      ENCODER          │
-│               │                       │  (Bidirectional        │
-│  Text → IDs   │                       │   Self-Attention)      │
-└───────────────┘                       │                        │
-                                        │  Reads ALL tokens      │
-                                        │  simultaneously        │
-                                        └──────────┬─────────────┘
-                                                   │
-                                          Context Vector
-                                          (compressed meaning)
-                                                   │
-                                        ┌──────────▼─────────────┐
-                                        │      DECODER           │
-                                        │  (Masked Self-Attention │
-                                        │  + Cross-Attention)     │
-                                        │                         │
-                                        │  Generates word by word │
-                                        │  using encoder context  │
-                                        └──────────┬─────────────┘
-                                                   │
-                                        ┌──────────▼─────────────┐
-                                        │  BEAM SEARCH (n=4)     │
-                                        │  Explores top-k paths  │
-                                        │  Picks best sequence   │
-                                        └──────────┬─────────────┘
-                                                   │
-                                        ┌──────────▼─────────────┐
-                                        │  DETOKENIZER           │
-                                        │  IDs → Human text      │
-                                        └────────────────────────┘
+       │                                                ▲
+       ▼                                                │
+ ┌─────────────┐                        ┌──────────────────────────┐
+ │  TOKENIZER  │ ──── token IDs ──────▶ │         ENCODER          │
+ │             │                        │   (Bidirectional         │
+ │ Text → IDs  │                        │    Self-Attention)       │
+ └─────────────┘                        │                          │
+                                        │  Reads ALL tokens        │
+                                        │  simultaneously          │
+                                        └─────────────┬────────────┘
+                                                      │
+                                             Context Vector
+                                           (compressed meaning)
+                                                      │
+                                        ┌─────────────▼────────────┐
+                                        │         DECODER          │
+                                        │  (Masked Self-Attention  │
+                                        │   + Cross-Attention)     │
+                                        │                          │
+                                        │  Generates word by word  │
+                                        │  using encoder context   │
+                                        └─────────────┬────────────┘
+                                                      │
+                                        ┌─────────────▼────────────┐
+                                        │    BEAM SEARCH (n=4)     │
+                                        │  Explores top-k paths    │
+                                        │  Picks best sequence     │
+                                        └─────────────┬────────────┘
+                                                      │
+                                        ┌─────────────▼────────────┐
+                                        │       DETOKENIZER        │
+                                        │    IDs → Human text      │
+                                        └──────────────────────────┘
 ```
 
 ### Key Architectural Concepts
 
-| Component | Role | Implementation |
-|---|---|---|
-| **Tokenizer** | Converts text to subword token IDs | SentencePiece BPE |
-| **Encoder** | Builds bidirectional context representation | 6 transformer layers |
-| **Decoder** | Auto-regressively generates summary tokens | 6 transformer layers |
-| **Attention** | Allows decoder to focus on relevant encoder states | Multi-head (8 heads) |
-| **Beam Search** | Finds optimal output sequence | Width = 4 (configurable) |
+| Component      | Role                                        | Implementation       |
+| -------------- | ------------------------------------------- | -------------------- |
+| **Tokenizer**  | Converts text to subword token IDs          | SentencePiece BPE    |
+| **Encoder**    | Builds bidirectional context representation | 6 transformer layers |
+| **Decoder**    | Auto-regressively generates summary tokens  | 6 transformer layers |
+| **Attention**  | Allows decoder to focus on relevant states  | Multi-head (8 heads) |
+| **Beam Search**| Finds optimal output sequence               | Width = 4 (configurable) |
 
 ---
 
@@ -191,29 +151,29 @@ INPUT TEXT                                         OUTPUT SUMMARY
 ```
 ┌─────────────────────────────────────────────┐
 │              FRONTEND LAYER                  │
-│         Streamlit  |  Custom CSS             │
+│          Streamlit  |  Custom CSS            │
 ├─────────────────────────────────────────────┤
 │              BACKEND LAYER                   │
-│    FastAPI  |  Uvicorn  |  Pydantic          │
+│     FastAPI  |  Uvicorn  |  Pydantic         │
 ├─────────────────────────────────────────────┤
 │               ML LAYER                       │
-│  HuggingFace Transformers  |  PyTorch        │
-│  T5-Small (60M parameters)                  │
+│   HuggingFace Transformers  |  PyTorch       │
+│   T5-Small (60M parameters)                 │
 ├─────────────────────────────────────────────┤
 │            EVALUATION LAYER                  │
-│         rouge-score  |  datasets             │
+│          rouge-score  |  datasets            │
 └─────────────────────────────────────────────┘
 ```
 
-| Layer | Technology | Version | Purpose |
-|---|---|---|---|
-| ML Framework | PyTorch | 2.x | Model inference |
-| NLP Library | HuggingFace Transformers | 4.x | T5 model & tokenizer |
-| Model | T5-Small | Pre-trained | Summarization |
-| Frontend | Streamlit | 1.x | Web UI |
-| Backend API | FastAPI | 0.x | REST endpoint |
-| Evaluation | rouge-score | latest | ROUGE metrics |
-| Dataset | CNN/DailyMail 3.0.0 | - | Fine-tuning data |
+| Layer         | Technology              | Version    | Purpose               |
+| ------------- | ----------------------- | ---------- | --------------------- |
+| ML Framework  | PyTorch                 | 2.x        | Model inference       |
+| NLP Library   | HuggingFace Transformers| 4.x        | T5 model & tokenizer  |
+| Model         | T5-Small                | Pre-trained| Summarization         |
+| Frontend      | Streamlit               | 1.x        | Web UI                |
+| Backend API   | FastAPI                 | 0.x        | REST endpoint         |
+| Evaluation    | rouge-score             | latest     | ROUGE metrics         |
+| Dataset       | CNN/DailyMail 3.0.0     | —          | Fine-tuning data      |
 
 ---
 
@@ -260,7 +220,7 @@ summarize-ai/
 
 ### Step 1 — Clone the Repository
 ```bash
-git clone https://github.com/yourusername/summarize-ai.git
+git clone https://zain31197/summarize-ai.git
 cd summarize-ai
 ```
 
@@ -399,20 +359,20 @@ summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
 ## 🤖 Model Details
 
-| Property | Value |
-|---|---|
-| Model Name | T5-Small |
-| Parameters | 60 Million |
-| Architecture | Encoder-Decoder Transformer |
-| Encoder Layers | 6 |
-| Decoder Layers | 6 |
-| Attention Heads | 8 |
-| Hidden Size | 512 |
-| Feed-Forward Size | 2048 |
-| Max Input Tokens | 512 |
-| Vocabulary Size | 32,128 |
-| Pre-training Task | Multi-task (including summarization) |
-| Pre-training Data | C4 (Colossal Clean Crawled Corpus) |
+| Property             | Value                                    |
+| -------------------- | ---------------------------------------- |
+| Model Name           | T5-Small                                 |
+| Parameters           | 60 Million                               |
+| Architecture         | Encoder-Decoder Transformer              |
+| Encoder Layers       | 6                                        |
+| Decoder Layers       | 6                                        |
+| Attention Heads      | 8                                        |
+| Hidden Size          | 512                                      |
+| Feed-Forward Size    | 2048                                     |
+| Max Input Tokens     | 512                                      |
+| Vocabulary Size      | 32,128                                   |
+| Pre-training Task    | Multi-task (including summarization)     |
+| Pre-training Data    | C4 (Colossal Clean Crawled Corpus)       |
 
 ---
 
@@ -426,13 +386,13 @@ python evaluate.py
 
 ### ROUGE Score Results
 
-| Model | ROUGE-1 | ROUGE-2 | ROUGE-L |
-|---|---|---|---|
-| T5-Small (pre-trained) | 0.31 | 0.12 | 0.28 |
-| T5-Small (fine-tuned) | 0.38 | 0.17 | 0.35 |
-| T5-Base (fine-tuned) | 0.42 | 0.20 | 0.39 |
+| Model                    | ROUGE-1 | ROUGE-2 | ROUGE-L |
+| ------------------------ | ------- | ------- | ------- |
+| T5-Small (pre-trained)   |  0.31   |  0.12   |  0.28   |
+| T5-Small (fine-tuned)    |  0.38   |  0.17   |  0.35   |
+| T5-Base  (fine-tuned)    |  0.42   |  0.20   |  0.39   |
 
-> ROUGE-1: unigram overlap | ROUGE-2: bigram overlap | ROUGE-L: longest common subsequence
+> ROUGE-1: unigram overlap · ROUGE-2: bigram overlap · ROUGE-L: longest common subsequence
 
 ---
 
@@ -461,11 +421,11 @@ training_args = Seq2SeqTrainingArguments(
 
 **Estimated Training Times:**
 
-| Hardware | Samples | Epochs | Time |
-|---|---|---|---|
-| CPU (local) | 500 | 2 | ~72 min |
-| Colab T4 GPU | 10,000 | 3 | ~30 min |
-| A100 GPU | Full dataset | 3 | ~4 hours |
+| Hardware       | Samples       | Epochs | Time      |
+| -------------- | ------------- | ------ | --------- |
+| CPU (local)    | 500           | 2      | ~72 min   |
+| Colab T4 GPU   | 10,000        | 3      | ~30 min   |
+| A100 GPU       | Full dataset  | 3      | ~4 hours  |
 
 ---
 
@@ -478,7 +438,7 @@ Generates a summary from input text.
 **Request Body:**
 ```json
 {
-  "text": "string (required) — the article to summarize",
+  "text":       "string  (required) — the article to summarize",
   "max_length": "integer (optional, default: 150)",
   "min_length": "integer (optional, default: 40)"
 }
@@ -487,11 +447,11 @@ Generates a summary from input text.
 **Response:**
 ```json
 {
-  "summary": "string",
-  "original_words": "integer",
-  "summary_words": "integer",
-  "compression_ratio": "float",
-  "time_taken": "float (seconds)"
+  "summary":          "string",
+  "original_words":   "integer",
+  "summary_words":    "integer",
+  "compression_ratio":"float",
+  "time_taken":       "float (seconds)"
 }
 ```
 
@@ -562,7 +522,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
 
-Made with ❤️ and 🤖 by [Your Name](https://github.com/yourusername)
+Made with ❤️ and 🤖 by [Zain Shahid](https://github.com/zain31197)
 
 ⭐ Star this repo if you found it helpful!
 
