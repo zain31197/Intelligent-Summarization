@@ -24,7 +24,7 @@
 ### 🖥️ Main Summarization Interface
 > Paste any article and get an instant AI-powered summary with detailed analytics
 
-![Main UI](https://raw.githubusercontent.com/yourusername/summarize-ai/main/screenshots/main_ui.png)
+![Main UI](ui_1.png)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -48,7 +48,7 @@
 ### 📊 Results & Analytics Dashboard
 > Rich output with compression metrics, download options, and summary history
 
-![Results UI](https://raw.githubusercontent.com/yourusername/summarize-ai/main/screenshots/results_ui.png)
+![Results UI](ui_2.png)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
